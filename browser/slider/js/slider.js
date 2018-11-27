@@ -8,6 +8,7 @@ const links = [
 
 const slider = document.getElementById('slider');
 let counter = 0;
+
 slider.src = links[counter];/* чтобы гифка не выводилась */
 setInterval(() => {
   if (counter === links.length - 1) {

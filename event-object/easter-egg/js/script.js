@@ -34,5 +34,11 @@ function checkKeys() {
   }
 }
 
-document.addEventListener('keydown', showMenu);
-document.addEventListener('keydown', checkKeys);
+if (document.addEventListener) {
+  document.addEventListener('keydown', showMenu);
+  document.addEventListener('keydown', checkKeys);
+} else if (document.attachEvent) {
+  document.attachEvent('keydown', showMenu);
+  document.attachEvent('keydown', checkKeys)
+}
+  

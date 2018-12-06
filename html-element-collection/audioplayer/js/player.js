@@ -24,15 +24,22 @@ if (players.length) {
   const btnStop =  btns.find((btn) => btn.className === "stop");
   const btnNext =  btns.find((btn) => btn.className === "next");
 
-  function playerPlay(pausedCancel = false) {
-    if (!mediaplayer.classList.contains('play')) {
-      mediaplayer.classList.add('play');
-    }
+  function playerPlay(pausedCancel, played) {
     if (!pausedCancel) {
       player.src = mediaFiles[counter].src;
       nameTrack.title = mediaFiles[counter].title;
+      if (played) {
+        if (!mediaplayer.classList.contains('play')) {
+          mediaplayer.classList.add('play');
+        }
+        player.play();  
+      }
+    } else {
+      if (!mediaplayer.classList.contains('play')) {
+        mediaplayer.classList.add('play');
+      }
+      player.play(); 
     }
-    player.play(); 
   }
 
   function playerStop(isStop = false) {
@@ -51,7 +58,7 @@ if (players.length) {
       if (counter < 0) {
         counter = mediaFiles.length - 1;
       }
-      playerPlay();
+      playerPlay(false, !player.paused);
     }
   }
 
@@ -68,14 +75,14 @@ if (players.length) {
       } else {
         counter += 1;  
       }
-      playerPlay();  
+      playerPlay(false, !player.paused); 
     }
   }
 
   if (btnPlayPause) {
     btnPlayPause.onclick = () => {
       if (player.paused) {
-        playerPlay(true);
+        playerPlay(true, false);
       } else {
         playerStop();
       }

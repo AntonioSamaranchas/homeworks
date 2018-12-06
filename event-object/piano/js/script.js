@@ -37,41 +37,38 @@ function playSound() {
   }
 }
 
-function replaceClass(tag, className, reserved) {
-  for (const cls of tag.classList) {
-    tag.classList.remove(cls);
-  }
-  tag.classList.add(reserved);
+function replaceClass(tag, className) {
+  tag.classList.remove('higher');
+  tag.classList.remove('middle');
+  tag.classList.remove('lower');
   tag.classList.add(className);
 }
 
-function setSounds(className = 'middle') {
-  const lists = document.getElementsByClassName('set');
-  Array.from(lists).forEach((list) => replaceClass(list, className, 'set'));
+function setSounds(className = 'middle', repeat) {
+  if (!repeat) {
+    const lists = document.getElementsByClassName('set');
+    Array.from(lists).forEach((list) => replaceClass(list, className));
 
-  const players = document.getElementsByTagName('audio');
-  for (let i = 0; i < players.length; i++) {
-    players[i].src = sounds[className][i];
+    const players = document.getElementsByTagName('audio');
+    for (let i = 0; i < players.length; i++) {
+      players[i].src = sounds[className][i];
+    } 
   }
 }
 
-function checkDefault() {
-  setSounds();
-}
-
 function checkTone() {
-  if (event.repeat) {
+  if (event.type === 'keydown') {
     if (event.shiftKey) {
-      setSounds('lower');
+      setSounds('lower', event.repeat);
     } else if (event.altKey) {
-      setSounds('higher');
-    } else {
-      setSounds();
+      setSounds('higher', event.repeat);
     }
+  } else if (event.type === 'keyup') {
+    setSounds('middle', event.repeat);
   }
 }
 
 document.addEventListener('keydown', checkTone);
-document.addEventListener('keyup', checkDefault);
+document.addEventListener('keyup', checkTone);
 
-setSounds();
+setSounds('middle', false);

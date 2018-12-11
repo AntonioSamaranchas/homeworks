@@ -4,14 +4,7 @@ var secret = 'KeyYKeyTKeyNKeyJKeyKKeyJKeyUKeyBKeyZ';
 var arrKeyCodes = [];
 
 function showMenu() {
-  if (!event.ctrlKey){
-    return;
-  }
-  if (!event.altKey){
-    return;
-  }
-
-  if (event.code === 'KeyT') {
+  if (event.ctrlKey && event.altKey && event.code === 'KeyT') {
     const navs = document.getElementsByTagName('nav');
     Array.from(navs).forEach((nav) => nav.classList.toggle('visible'));
   }  
@@ -34,11 +27,6 @@ function checkKeys() {
   }
 }
 
-if (document.addEventListener) {
-  document.addEventListener('keydown', showMenu);
-  document.addEventListener('keydown', checkKeys);
-} else if (document.attachEvent) {
-  document.attachEvent('keydown', showMenu);
-  document.attachEvent('keydown', checkKeys)
-}
+document.addEventListener('keydown', showMenu);
+document.addEventListener('keydown', checkKeys);
   

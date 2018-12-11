@@ -7,30 +7,47 @@ function toggleClass(btn) {
   btn.classList.add('active');
 }
 
-function getData() {
+function getData(url) {
+  if (!url) {
+    return;
+  }
+
+  const indicator = document.getElementById('preloader');
   const xhr = new XMLHttpRequest();
   xhr.addEventListener('load', onLoad);
-  xhr.open('GET', 'https://neto-api.herokuapp.com/book/', true);
+  xhr.addEventListener('loadstart', onLoadstart);
+  xhr.open('GET', url, true);
   xhr.send();
 
+  function onLoadstart() {
+    indicator.classList.remove('hidden'); 
+  }
+
   function onLoad() {
+    indicator.classList.add('hidden');
     if (xhr.status === 200) {
-      const resultParse = JSON.parse(xhr.responseText);
-      buildHtml(resultParse);
-    } else {
-      alert(`Ответ ${xhr.status}: ${xhr.statusText}`);
+      const htmlText = xhr.responseText;
+      buildHtml(htmlText);
     }
   } 
+
+  function buildHtml(htmlText) {
+    const content = document.getElementById('content');
+    content.innerHTML = htmlText;
+  }
 }
 
 function tabClick() {
   event.preventDefault();
   toggleClass(this);
+  getData(this.href);
 }
 
 function init() {
   const btns = document.querySelectorAll('nav > a');
+  const firstBtn = document.querySelector('nav > a');
   Array.from(btns).forEach(bnt => bnt.addEventListener('click', tabClick));
+  firstBtn.click();
 }
 
 document.addEventListener('DOMContentLoaded', init);

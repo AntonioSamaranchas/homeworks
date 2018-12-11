@@ -7,7 +7,7 @@ if (request.status === 200) {
 }*/
 request.addEventListener('load', onLoad);
 request.addEventListener('error', onError);
-request.open('GET', 'https://netology-fbb-store-api.herokuapp.com/weather', true);
+request.open('GET', 'https://neto-api.herokuapp.com/weather', true);
 request.send();
 
 function onLoad() {

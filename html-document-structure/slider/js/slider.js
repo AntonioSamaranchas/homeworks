@@ -13,18 +13,24 @@ function Slider(container) {
   prev.classList.add('disabled');
   first.classList.add('disabled');
 
-  next.addEventListener('click', event => moveSlide(true));
-  prev.addEventListener('click', event => moveSlide(false));
-  first.addEventListener('click', event => moveSlideEnd(false));
-  last.addEventListener('click', event => moveSlideEnd(true));
+  btns.forEach(btn => btn.addEventListener('click', event => moveSlide()));
 
-  function moveSlide(isForward) {
-    if ((isForward && next.classList.contains('disabled')) || (!isForward && prev.classList.contains('disabled'))) {
+  function moveSlide() {
+    const action = event.target.dataset.action;
+    if ((action === 'next' && next.classList.contains('disabled')) 
+        || (action === 'prev' && prev.classList.contains('disabled')) 
+        || (action === 'last' && last.classList.contains('disabled'))
+        || (action === 'first' && first.classList.contains('disabled'))) {
       return;
     }
 
+    let activatedSlide;
     currentSlide = container.querySelector('.slide-current');
-    const activatedSlide = isForward ? currentSlide.nextElementSibling : currentSlide.previousElementSibling;
+    if (action === 'next' || action === 'prev') {
+      activatedSlide = action === 'next' ? currentSlide.nextElementSibling : currentSlide.previousElementSibling;
+    } else {
+      activatedSlide = action === 'last' ? slides.find(slide => {return slide.nextElementSibling === null}) : slides.find(slide => {return slide.previousElementSibling === null});
+    }  
     currentSlide.classList.remove('slide-current');
     activatedSlide.classList.add('slide-current');
 
@@ -42,29 +48,6 @@ function Slider(container) {
     } else {
       prev.classList.remove('disabled');
       first.classList.remove('disabled');
-    }
-  }
-
-  function moveSlideEnd(isForward) {
-    if ((isForward && last.classList.contains('disabled')) || (!isForward && first.classList.contains('disabled'))) {
-      return;
-    }
-
-    currentSlide = container.querySelector('.slide-current');
-    const activatedSlide = isForward ? slides.find(slide => {return slide.nextElementSibling === null}) : slides.find(slide => {return slide.previousElementSibling === null});
-    currentSlide.classList.remove('slide-current');
-    activatedSlide.classList.add('slide-current');
-
-    if (isForward) {
-      last.classList.add('disabled');
-      next.classList.add('disabled');
-      first.classList.remove('disabled');
-      prev.classList.remove('disabled');
-    } else {
-      first.classList.add('disabled');
-      prev.classList.add('disabled');
-      last.classList.remove('disabled');
-      next.classList.remove('disabled');
     }
   }
 }

@@ -6,11 +6,10 @@ function handleTableClick(event) {
   }
 
   if (event.target.dataset.propName !== event.currentTarget.dataset.sortBy) {
-    window.dir = undefined;
+    event.target.dataset.dir = '';
   }
 
   event.currentTarget.dataset.sortBy = event.target.dataset.propName;
-  event.currentTarget.firstElementChild.dataset.dir = window.dir ? -window.dir : 1;
-  window.dir = Number(event.currentTarget.firstElementChild.dataset.dir);
-  sortTable(event.target.dataset.propName, window.dir);
+  event.target.dataset.dir = event.target.dataset.dir ? -event.target.dataset.dir : 1;
+  sortTable(event.target.dataset.propName, event.target.dataset.dir);
 }

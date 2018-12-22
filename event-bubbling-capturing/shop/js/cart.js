@@ -1,30 +1,19 @@
 'use strict'
 
 function addProduct(event) {
+  if (!event.target.classList.contains('add-to-cart')) {
+    return;
+  }
+
   const product = {
-    'title': event.currentTarget.dataset.title,
-    'price': event.currentTarget.dataset.price
+    'title': event.target.dataset.title,
+    'price': event.target.dataset.price
   };
+
   event.preventDefault();
   addToCart(product);
   event.stopPropagation();
 }
 
-function initBtns(container) {
-  const btns = container.querySelectorAll('.add-to-cart');
-  Array.from(btns).forEach(btn => {
-    if (btn.dataset.established) {
-      return;
-    }
-    btn.addEventListener('click', addProduct);
-    btn.dataset.established = true;
-  });
-}
-
-function getLists() {
-  const itemsList = document.querySelectorAll('.items-list');
-  Array.from(itemsList).forEach(item => initBtns(item));
-}  
-
-showMore.addEventListener('click', getLists);
-getLists();
+const itemsList = document.querySelectorAll('.items-list');
+Array.from(itemsList).forEach(item => item.addEventListener('click', addProduct));

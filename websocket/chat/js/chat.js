@@ -16,7 +16,7 @@ function online() {
   ws.addEventListener('error', connectionFail);
   ws.addEventListener('close', closed);
 
-  function getMsg(typeMsg) {  
+  function getMsg(typeMsg = '') {  
     let node;
     
     switch (typeMsg) {
@@ -30,9 +30,34 @@ function online() {
         node = messages.querySelector('.message-personal').cloneNode(true);
         break;  
       default :
-        node = messages.querySelector('.loading').nextElementSibling.cloneNode(true);;
+        node = messages.querySelector('.loading').nextElementSibling.cloneNode(true);/* не придумал как иначе */
     }
     return node;
+  }
+
+  function currentTime() {
+    const currentDate = new Date();
+    return `${currentDate.getHours()}:${currentDate.getMinutes()}`;
+  }
+
+  function addMessage(msg) {
+    content.appendChild(msg);  
+  }
+
+  function send() {
+    if ((event instanceof KeyboardEvent && event.keyCode !== 'keyEnter') || input.value.length === 0) {
+      return;
+    }
+    
+    event.preventDefault();
+    const time = currentTime();
+    const msg = getMsg('personal');
+    msg.querySelector('.message-text').textContent = input.value;
+    msg.querySelector('.timestamp').textContent = time;
+    
+    addMessage(msg);
+    ws.send(input.value);
+    input.value = '';
   }
 
   function connectionOk() {
@@ -41,11 +66,25 @@ function online() {
     
     status.textContent = status.dataset.online;
     bntSend.removeAttribute('disabled');
-    content.appendChild(msg);
+    addMessage(msg);
   }
 
   function message() {
+    let msg;
+    const time = currentTime();
 
+    if (event.data === '...') {
+      msg = getMsg('loading');
+      msg.dataset.prints = true;
+      msg.querySelector('span').textContent = '...';
+    } else {
+      msg = getMsg();
+      msg.querySelector('.message-text').textContent = event.data;
+      msg.querySelector('.timestamp').textContent = time;
+      Array.from(content.querySelectorAll('[data-prints]'))
+        .forEach(print => content.removeChild(print));
+    }
+    addMessage(msg);
   }
 
   function connectionFail() {
@@ -57,7 +96,7 @@ function online() {
 
     status.textContent = status.dataset.offline;
     bntSend.setAttribute('disabled', '');
-    content.appendChild(msg);
+    addMessage(msg);
   }
 
   function closeConnection() {
@@ -65,6 +104,8 @@ function online() {
     ws.close(1000, 'ок');
   }
 
+  bntSend.addEventListener('click', send);
+  document.addEventListener('keydown', send);
   window.addEventListener('beforeunload', closeConnection);
 }
 online();

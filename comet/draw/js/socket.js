@@ -3,11 +3,12 @@
 function onLoad() {
   const ws = new WebSocket('wss://neto-api.herokuapp.com/draw');
 
-  function paint() {
-    const ctx = event.target.getContext('2d');
-    const image = ctx.getImageData(0, 0, event.target.width, event.target.height);
-    const binary = Uint8Array.from(image.data);
-    ws.send(binary.buffer); 
+  function paint(event) {
+    if (event instanceof MouseEvent) {
+      canvas.toBlob((blob) =>  ws.send(blob)); // из скрипта draw var canvas
+    } else {
+      event.canvas.toBlob((blob) =>  ws.send(blob)); 
+    }
   }
 
   function closeConnection() {
@@ -18,6 +19,7 @@ function onLoad() {
   }
 
   window.editor.addEventListener('update', paint);
+  clearCanvas.addEventListener('click', paint);
   window.addEventListener('beforeunload', closeConnection);
 }
 

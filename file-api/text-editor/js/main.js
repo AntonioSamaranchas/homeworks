@@ -17,18 +17,39 @@ class TextEditor {
   }
   registerEvents() {
     const save = throttle( this.save.bind( this ), 1000 );
+    const showHint = this.showHint.bind( this );
+    const loadFile = this.loadFile.bind( this );
     this.contentContainer.addEventListener( 'input', save );
+    this.contentContainer.addEventListener( 'dragover', showHint);
+    this.hintContainer.addEventListener( 'drop', loadFile );
+    this.hintContainer.addEventListener( 'dragover', event => event.preventDefault());
   }
   loadFile( e ) {
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer.files);
+    files.forEach(file => {
+      this.readFile(file);
+      this.setFilename(file.name);
+      this.hideHint();
+    });
   }
   readFile( file ) {
+    const reader = new FileReader();
+    this.contentContainer.value = '';
+    reader.addEventListener('load', event => {
+      this.contentContainer.value = event.target.result;
+    });
+    reader.readAsText(file);
   }
   setFilename( filename ) {
     this.filenameContainer.textContent = filename;
   }
   showHint( e ) {
+    e.preventDefault();
+    this.hintContainer.classList.add('text-editor__hint_visible');
   }
   hideHint() {
+    this.hintContainer.classList.remove('text-editor__hint_visible');
   }
   load( value ) {
     this.contentContainer.value = value || '';

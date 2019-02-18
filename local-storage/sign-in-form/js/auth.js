@@ -42,7 +42,8 @@ function message(request, err = false) {
   }
 }
 
-function send() {
+function send(event) {
+  event.preventDefault();
   const json = JSON.stringify(getData());
   const xhr = new XMLHttpRequest();
   xhr.addEventListener('load', onLoad);
